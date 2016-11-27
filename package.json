@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/teikmeout/socketio-trial/issues"
   },
-  "homepage": "https://github.com/teikmeout/socketio-trial#readme"
+  "homepage": "https://github.com/teikmeout/socketio-trial#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "path": "^0.12.7",
+    "socket.io": "^1.6.0"
+  }
 }
