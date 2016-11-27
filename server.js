@@ -1,46 +1,27 @@
-'use strict';
-
-// initializing express
 const express = require('express');
 const app = express();
-// http being taken in server
-const http = require('http').Server(app);
-// requiring socket io
-const io = require('socket.io')(http);
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+users = [];
+connections = [];
 
-const path = require('path');
+server.listen(process.env.PORT || 3000);
+console.log('server listening on port 3000');
 
-
-app.use(express.static(path.join(__dirname, 'public')));
-// defining home route
+// sending out the index.html file, no need to restart server if it's only
+// index.html we are modifying
 app.get('/', (req, res) => {
-  // res.sendFile(__dirname + '/index.html');
-  // res.sendFile(__dirname + '/home.html');
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+  res.sendFile(__dirname + '/index.html');
+})
 
-// adding io connection after requiring it
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  // adding a socket disconnect action
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-  // adding a socket for chat message
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-  });
+// all of the events we need to create are gonna go inside here
+io.sockets.on('connection', (socket) => {
+  // we have an array of name connections at the top and we are pushing
+  // into that array the new connection created on that moment with the socket ID
+  connections.push(socket);
+  console.log(`Connected on ${connections.length} sockets`);
 
-});
-
-io.on('connection', (socket) => {
-
-});
-
-
-
-
-// making server listen on port 3000
-http.listen(3000, () => {
-  console.log('listening on PORT 3000');
-});
+  // making the disconnect
+  connections.splice(connections.indexOf(socket), 1);
+  console.log(`Disconnected. ${connections.length} sockets remaining`);
+})
